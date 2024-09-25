@@ -5,7 +5,7 @@ using Corvus.Nest.Backend.Extensions;
 
 namespace Corvus.Nest.Backend.Extensions;
 
-public static class DataTableExtension
+public static class DataExtension
 {
     public static DataTable ToDataTable<T>(this IList<T> data)
     {
