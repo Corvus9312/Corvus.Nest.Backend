@@ -18,4 +18,11 @@ public class AppService(IAppRepository appRepository, IMapper mapper) : IAppServ
     }
 
     public async Task<IEnumerable<BlogMenu>> GetBlogMenus() => await appRepository.GetBlogMenus();
+
+    public async Task<int> CreateArticle(Article article)
+    {
+        article.ID = Guid.NewGuid();
+
+        return await appRepository.CreateArticle(article);
+    }
 }

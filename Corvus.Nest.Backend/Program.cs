@@ -1,5 +1,6 @@
 using Corvus.Nest.Backend.Interfaces.IRepositories;
 using Corvus.Nest.Backend.Interfaces.IServices;
+using Corvus.Nest.Backend.Models.DAL.Corvus;
 using Corvus.Nest.Backend.Repositories;
 using Corvus.Nest.Backend.Services;
 
@@ -25,10 +26,15 @@ public class Program
 
                 app.Map("/GetBlogMenus", () => GetBlogMenus());
 
+                app.MapPost("/CreateArticle",
+                    (Article article) => CreateArticles(article));
+
             }, builder);
     }
 
     private static async Task<IResult> GetAbout() => Results.Ok(await _appService.GetAbout());
     
     private static async Task<IResult> GetBlogMenus() => Results.Ok(await _appService.GetBlogMenus());
+
+    private static async Task<IResult> CreateArticles(Article article) => Results.Ok(await _appService.CreateArticle(article));
 }

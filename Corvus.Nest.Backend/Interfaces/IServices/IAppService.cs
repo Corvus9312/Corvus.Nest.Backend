@@ -8,4 +8,6 @@ public interface IAppService
     Task<GetAboutVM> GetAbout();
 
     Task<IEnumerable<BlogMenu>> GetBlogMenus();
+
+    Task<int> CreateArticle(Article article);
 }
