@@ -6,5 +6,5 @@ public class Category
 
     public string Title { get; set; } = null!;
 
-    public ICollection<Article> Articles { get; set; } = [];
+    public IEnumerable<Article> Articles { get; set; } = [];
 }

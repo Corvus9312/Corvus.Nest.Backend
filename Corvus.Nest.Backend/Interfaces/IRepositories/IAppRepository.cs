@@ -10,9 +10,9 @@ public interface IAppRepository
 
     Task<IEnumerable<SocialMedia>> GetSocialMedia();
 
-    Task<Category?> GetCategory(Guid? id = null, string? title = null, bool includeArticles = false);
+    Task<Category?> GetCategory(Guid id);
 
-    Task<IEnumerable<Category>> GetCategories(bool includeArticles = false);
+    Task<IEnumerable<Category>> GetCategories();
 
     Task<IEnumerable<Article>> GetArticles(Guid? id = null);
 

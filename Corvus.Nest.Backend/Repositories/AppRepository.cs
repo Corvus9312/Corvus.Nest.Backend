@@ -1,6 +1,7 @@
 ﻿using Corvus.Nest.Backend.Interfaces.IHelpers;
 using Corvus.Nest.Backend.Interfaces.IRepositories;
 using Corvus.Nest.Backend.Models.DAL.Corvus;
+using Corvus.Nest.Backend.Extensions;
 
 namespace Corvus.Nest.Backend.Repositories;
 
@@ -27,52 +28,33 @@ public class AppRepository(IDatabaseHelper database) : IAppRepository
         return await database.SqlQueryAsync<SocialMedia>(queryStr);
     }
 
-    public async Task<Category?> GetCategory(Guid? id = null, string? title = null, bool includeArticles = false)
+    public async Task<Category?> GetCategory(Guid id)
     {
-        var queryStr = "Select top 1 * from Category where 1 = 1 ";
+        var queryStr = "Select top 1 * from Category where and ID = @ID ";
 
         Dictionary<string, object> parameters = [];
-        if (id is not null)
-        {
-            queryStr += " and ID = @ID ";
-            parameters.Add("@ID", id);
-        }
-        if (!string.IsNullOrWhiteSpace(title))
-        {
-            queryStr += " and Title = @Title ";
-            parameters.Add("@Title", title);
-        }
+        parameters.Add("@ID", id);
 
-        var result = (await database.SqlQueryAsync<Category>(queryStr, parameters)).FirstOrDefault();
-
-        if (includeArticles && result is not null)
-            result.Articles = (await GetArticles(result.ID)).ToList();
-
-        return result;
+        return (await database.SqlQueryAsync<Category>(queryStr, parameters)).FirstOrDefault();
     }
 
-    public async Task<IEnumerable<Category>> GetCategories(bool includeArticles = false)
+    public async Task<IEnumerable<Category>> GetCategories()
     {
-        var queryStr = "Select * from Category ";
+        var queryStr = "select * from Category ";
 
         var result = await database.SqlQueryAsync<Category>(queryStr);
 
-        if (includeArticles)
-        {
-            foreach (var item in result)
-            {
-                item.Articles = (await GetArticles(item.ID)).ToList();
-            }
-        }
-
         return result;
     }
 
-    public async Task<IEnumerable<Article>> GetArticles(Guid? id = null)
+    public async Task<IEnumerable<Article>> GetArticles(Guid? category = null)
     {
-        var queryStr = "Select * from Article ";
+        var queryStr = "select * from Article ";
 
-        return await database.SqlQueryAsync<Article>(queryStr);
+        if (category is not null)
+            queryStr += " where Category = @Category ";
+
+        return await database.SqlQueryAsync<Article>(queryStr, new { Category = category });
     }
 
     public async Task<int> CreateArticle(Article article)

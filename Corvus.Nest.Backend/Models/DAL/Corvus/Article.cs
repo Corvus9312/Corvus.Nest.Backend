@@ -15,4 +15,6 @@ public class Article
     public int Sort { get; set; }
 
     public DateTime CreateTime { get; set; }
+
+    public Category CategoryNavigation { get; set; } = null!;
 }
