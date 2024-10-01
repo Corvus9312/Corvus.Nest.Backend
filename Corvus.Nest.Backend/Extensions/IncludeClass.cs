@@ -2,7 +2,6 @@
 using Corvus.Nest.Backend.Models.DAL.Corvus;
 using System.Collections;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace Corvus.Nest.Backend.Extensions;
 
@@ -42,7 +41,7 @@ public static class IncludeClass
         var value = Guid.Parse($"{tType.GetProperty(key)?.GetValue(item)}");
 
         var methodName = select is IEnumerable ? $"Get{includeProperty}": $"Get{includeProperty.Replace("Navigation", "")}";
-        var repoMehtod = typeof(IAppRepository).GetMethod(methodName) ?? throw new Exception($"Method:「{methodName}」 is not found");
+        var repoMehtod = typeof(IAppRepository).GetMethod(methodName, new Type[] { relational.Type }) ?? throw new Exception($"Method:「{methodName}」 is not found");
         var taskResult = (Task<TProperty>?)repoMehtod.Invoke(Program.AppRepository, [value]);
 
         if (taskResult is null) return;

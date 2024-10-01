@@ -1,4 +1,3 @@
-using Corvus.Nest.Backend.Extensions;
 using Corvus.Nest.Backend.Interfaces.IRepositories;
 using Corvus.Nest.Backend.Interfaces.IServices;
 using Corvus.Nest.Backend.Models.DAL.Corvus;
@@ -29,11 +28,19 @@ public class Program
 
                 app.MapGet("/GetBlogMenus", async () => await GetBlogMenus());
 
-                app.MapGet("/GetArticles", async () => await GetArticles());
+                app.MapGet("/GetCategory", async (Guid id) => await GetCategory(id));
+
+                app.MapGet("/GetCategories", async () => await GetCategories());
+
+                app.MapGet("/GetArticle", async (Guid id) => await GetArticle(id));
+
+                app.MapGet("/GetArticles", async (Guid? categoryID) => await GetArticles(categoryID));
 
                 app.MapPost("/CreateArticle",
                     async (Article article) => await CreateArticles(article));
 
+                app.MapPost("/UpdateArticle",
+                    async (Article article) => await UpdateArticle(article));
             }, builder);
     }
 
@@ -41,7 +48,15 @@ public class Program
 
     private static async Task<IResult> GetBlogMenus() => Results.Ok(await _appService.GetBlogMenus());
 
-    private static async Task<IResult> GetArticles() => Results.Ok();
+    private static async Task<IResult> GetCategory(Guid id) => Results.Ok(await _appService.GetCategory(id));
+
+    private static async Task<IResult> GetCategories() => Results.Ok(await _appService.GetCategories());
+
+    private static async Task<IResult> GetArticle(Guid id) => Results.Ok(await _appService.GetArticle(id));
+
+    private static async Task<IResult> GetArticles(Guid? categoryID) => Results.Ok(await _appService.GetArticles(categoryID));
 
     private static async Task<IResult> CreateArticles(Article article) => Results.Ok(await _appService.CreateArticle(article));
+
+    private static async Task<IResult> UpdateArticle(Article article) => Results.Ok(await _appService.UpdateArticle(article));
 }
