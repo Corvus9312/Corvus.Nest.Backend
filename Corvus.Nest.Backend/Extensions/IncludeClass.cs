@@ -2,31 +2,26 @@
 using Corvus.Nest.Backend.Models.DAL.Corvus;
 using System.Collections;
 using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Corvus.Nest.Backend.Extensions;
 
 public static class IncludeClass
 {
-    public static void Include<T, TProperty>(this T item, Func<T, TProperty> selector) where T : class
+    public static void Include<T, TProperty>(this T item, Expression<Func<T, TProperty>> selector) where T : class
     {
         Type tType = typeof(T);
         PropertyDescriptorCollection tProps = TypeDescriptor.GetProperties(tType);
-        
-        Type propType = typeof(TProperty);
 
-        string? includeProperty = null;
-        foreach (PropertyDescriptor tProp in tProps)
-        {
-            if (propType.Equals(tProp.PropertyType))
-            {
-                includeProperty = tProp.Name;
-            }
-        }
+        MemberExpression member = (MemberExpression)selector.Body;
+        PropertyInfo selectProp = (PropertyInfo)member.Member;
+        Type propType = selectProp.PropertyType;
 
+        string? includeProperty = selectProp.Name;
         if (string.IsNullOrWhiteSpace(includeProperty)) return;
 
-        var select = selector(item);
-
+        var select = selector.Compile()(item);
         if (select is IEnumerable)
             propType = propType.GetGenericArguments().First();
 
@@ -53,7 +48,7 @@ public static class IncludeClass
         tType.GetProperty(includeProperty)?.SetValue(item, result);
     }
 
-    public static void Include<T, TProperty>(this IEnumerable<T> items, Func<T, TProperty> selector) where T : class
+    public static void Include<T, TProperty>(this IEnumerable<T> items, Expression<Func<T, TProperty>> selector) where T : class
     {
         Parallel.ForEach(items, (item, token) => Include(item, selector));
     }

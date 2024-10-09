@@ -63,7 +63,6 @@ public class AppService(IAppRepository appRepository, IMapper mapper) : IAppServ
         return await appRepository.CreateArticle(article);
     }
     
-
     public async Task<int> UpdateArticle(Article article)
     {
         return await appRepository.UpdateArticle(article);
