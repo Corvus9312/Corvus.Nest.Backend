@@ -16,6 +16,8 @@ public static class ProgramBase
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+        
+
         services.AddCors();
 
         // jsonOption
@@ -47,6 +49,8 @@ public static class ProgramBase
 
         app.UseHsts();
         app.UseRouting();
+
+        app.UseStaticFiles();
 
         app.UseMiddleware<LoggingMiddleware>();
 

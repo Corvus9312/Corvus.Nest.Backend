@@ -33,7 +33,7 @@ public class AppService(IAppRepository appRepository, IMapper mapper) : IAppServ
     {
         var result = await appRepository.GetCategories();
 
-        result.Include(x => x.Articles);
+        //result.Include(x => x.Articles);
 
         return result;
     }
@@ -62,7 +62,7 @@ public class AppService(IAppRepository appRepository, IMapper mapper) : IAppServ
 
         return await appRepository.CreateArticle(article);
     }
-    
+
     public async Task<int> UpdateArticle(Article article)
     {
         return await appRepository.UpdateArticle(article);

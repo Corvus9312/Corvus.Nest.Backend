@@ -52,4 +52,29 @@ public static class IncludeClass
     {
         Parallel.ForEach(items, (item, token) => Include(item, selector));
     }
+
+    public static T Trim<T, TProperty>(this T item, Expression<Func<T, TProperty>> selector) where T : class
+    {
+        Type type = typeof(T);
+
+        MemberExpression member = (MemberExpression)selector.Body;
+        PropertyInfo selectProp = (PropertyInfo)member.Member;
+
+        var value = ((string?)type.GetProperty(selectProp.Name)?.GetValue(item))?.Trim();
+
+        type.GetProperty(selectProp.Name)?.SetValue(item, value);
+
+        return item;
+    }
+
+    public static IEnumerable<T> Trim<T, TProperty>(this IEnumerable<T> item, Expression<Func<T, TProperty>> selector) where T : class
+    {
+        Parallel.ForEach(item,
+            x =>
+            {
+                Trim(x, selector);
+            });
+
+        return item;
+    }
 }
